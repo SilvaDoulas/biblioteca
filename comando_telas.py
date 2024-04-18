@@ -2,7 +2,34 @@ from tkinter import *
 from usuario import *
 from bd import *
 from conexao import *
-from tela_inicial import *
+
+def volta():
+    #Criar nossa janela
+    jan = Tk()
+    jan.title("Biblioteca BGD²")
+    jan.geometry("1200x600")
+    #======Widgets==============
+    Leftframe = Frame(jan, width=600, height=1200, bg="MIDNIGHTBLUE", relief="raise")
+    Leftframe.pack(side=LEFT)
+
+    Rightframe = Frame(jan, width=1000, height=1200, bg="MIDNIGHTBLUE", relief="raise")
+    Rightframe.pack(side=RIGHT)
+
+    label_inicial = Label(Rightframe, text="Bem vindo a Biblioteca!", font=("Century Gothic", 25), bg="MIDNIGHTBLUE", fg="white")
+    label_inicial.place(x=1, y=250)
+
+    #Botões
+    LoginButton = Button(Rightframe, text="Login", width=30, command= Telas_Usuario.login_user())
+    LoginButton.place(x=90, y=350)
+
+    RegiButton = Button(Rightframe, text="Registrar", width=30, command= Telas_Usuario.cadastrar_user())
+    RegiButton.place(x=90, y=385)
+
+    notButton = Button(Rightframe, text="Continuar sem login", width=30)
+    notButton.place(x=90, y=420)
+
+
+    jan.mainloop()
 
 class Telas_Livro:
 
@@ -40,11 +67,11 @@ class Telas_Livro:
 
         btn_Cadastrar = Button(root, text='Cadastrar Livro', command=registrar_livro)
         btn_Cadastrar.grid(row=3, columnspan=2, padx=5, pady=5)
-        btn_voltar = Button(root, text='Voltar', command= Men )
+        btn_voltar = Button(root, text='Voltar', command= volta )
         btn_voltar.grid(row= 4, columnspan=3, padx= 6, pady=6 )
         root.mainloop()
         mydb.close()
-    
+
     def autualizar_livro():
         mydb = connect()
         tela = Tk()
@@ -80,7 +107,7 @@ class Telas_Livro:
 
         botao_atualizar = Button(tela, text='Atualizar Livro', command= registrar_atualizacao)
         botao_atualizar.grid(column=1, row=4)
-        btn_voltar = Button(tela, text='Voltar', command= Men )
+        btn_voltar = Button(tela, text='Voltar', command= volta )
         btn_voltar.grid(row= 4, columnspan=3, padx= 6, pady=6 )
         tela.mainloop()
         mydb.close()
@@ -101,7 +128,7 @@ class Telas_Livro:
             
         botao_emprestar = Button(tela, text='Emprestar Livro', command= registrar_emprestimo)
         botao_emprestar.grid(column=1, row=1)
-        btn_voltar = Button(tela, text='Voltar', command= Men )
+        btn_voltar = Button(tela, text='Voltar', command= volta )
         btn_voltar.grid(row= 4, columnspan=3, padx= 6, pady=6 )
         tela.mainloop()
         mydb.close()
@@ -110,6 +137,30 @@ class Telas_Livro:
         mydb = connect()
         tela = Tk()
         tela.title('Devolver Livro')
+
+        label_titulo = Label(tela, text='Digite o Titulo do Livro: ')
+        label_titulo.grid(column=0, row=0)
+        entrada_titulo = Entry(tela)
+        entrada_titulo.grid(column=1, row=0)
+
+        def registrar_devolucao():
+            t = entrada_titulo.get()
+            give_back2(mydb, t)
+        
+        botao_devolver = Button(tela, text='Devolver Livro', command= registrar_devolucao)
+        botao_devolver.grid(column=1, row=2)
+        btn_voltar = Button(tela, text='Voltar', command= volta )
+        btn_voltar.grid(row= 4, columnspan=3, padx= 6, pady=6 )
+        tela.mainloop()
+        mydb.close()
+
+    def listagem_livro():
+        mydb = connect()
+        tela = Tk()
+        tela.title('Acervo')
+
+        
+    
 
         
     
@@ -177,9 +228,39 @@ class Telas_Usuario:
             cpe = entrada_CEP.get()
             register(mydb, n, em, s, nas,  r, b, c, es, cpe)
         
-        botao_login = Button(tela, text='Cadastrar', command= registro_user)
-        botao_login.grid(column= 1, row= 12)
-
-
+        botao_cadastrar = Button(tela, text='Cadastrar', command= registro_user)
+        botao_cadastrar.grid(column= 1, row= 12)
         tela.mainloop()
         mydb.close()
+    
+    def login_user():
+        mydb = connect()
+        tela = Tk()
+        tela.title('Login')
+
+        label_email = Label(tela, text='Digite seu email: ')
+        label_email.grid (column=0, row=0)
+        entrada_email = Entry(tela)
+        entrada_email.grid (column=1, row=0)
+
+        label_senha = Label(tela, text='Digite sua senha: ')
+        label_senha.grid(column=0, row=1)
+        entrada_senha = Entry(tela, show='*')
+        entrada_senha.grid(column=1, row=1)
+
+        def registrar_login():
+            em = entrada_email.get()
+            sen = entrada_senha.get()
+            login(mydb, em, sen)
+            if login:
+                return True
+            else:
+                return False
+
+       
+        botao_login = Button(tela, text='Login', command=registrar_login)
+        botao_login.grid (column=1, row= 2)
+        tela.mainloop()
+        mydb.close()
+
+volta()

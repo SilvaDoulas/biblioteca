@@ -168,7 +168,30 @@ def to_lend(mydb, user, titulo):
 
     mycursor.close()
 
+def give_back2(mydb, titulo):
+    mycursor = mydb.cursor()
 
+    sql_check_emprestimo = "SELECT id_emprestimo FROM emprestimos WHERE id_livro = (SELECT id_livro FROM livros WHERE titulo = %s)"
+    val_check_emprestimo = (titulo)
+    mycursor.execute(sql_check_emprestimo, val_check_emprestimo)
+    emprestimo = mycursor.fetchone()
+
+    if emprestimo:  # Se o livro foi emprestado pelo usuário
+        try:
+                # Remover o registro de empréstimo
+                sql_delete_emprestimo = "DELETE FROM emprestimos WHERE id_livro = (SELECT id_livro FROM livros WHERE titulo = %s)"
+                mycursor.execute(sql_delete_emprestimo, val_check_emprestimo)
+
+                # Atualizar o status do livro para disponível
+                sql_update_status = "UPDATE livros SET status_ = 1 WHERE titulo = %s"
+                mycursor.execute(sql_update_status, (titulo,))
+
+                mydb.commit()
+                print("Livro devolvido com sucesso!")
+        except Exception as e:
+                print("Erro ao devolver livro:", e)
+    else:
+            print("Você não pode devolver este livro, pois não o emprestou.")
 
 def give_back(mydb, user, titulo):
     mycursor = mydb.cursor()
