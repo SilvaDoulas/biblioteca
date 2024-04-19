@@ -1,9 +1,11 @@
 from tkinter import *
+from tkinter import messagebox
 from usuario import *
 from bd import *
 from conexao import *
 
-def volta():
+
+def inicio():
     #Criar nossa janela
     jan = Tk()
     jan.title("Biblioteca BGD²")
@@ -19,15 +21,44 @@ def volta():
     label_inicial.place(x=1, y=250)
 
     #Botões
-    LoginButton = Button(Rightframe, text="Login", width=30, command= Telas_Usuario.login_user())
+    LoginButton = Button(Rightframe, text="Login", width=30, command= Telas_Usuario.login_user)
     LoginButton.place(x=90, y=350)
 
-    RegiButton = Button(Rightframe, text="Registrar", width=30, command= Telas_Usuario.cadastrar_user())
+    RegiButton = Button(Rightframe, text="Registrar", width=30, command= Telas_Usuario.cadastrar_user)
     RegiButton.place(x=90, y=385)
 
-    notButton = Button(Rightframe, text="Continuar sem login", width=30)
-    notButton.place(x=90, y=420)
+    jan.mainloop()
 
+def menu_opcoes():
+      #Criar nossa janela
+    jan = Tk()
+    jan.title("Biblioteca BGD²")
+    jan.geometry("1200x600")
+    #======Widgets==============
+    Leftframe = Frame(jan, width=600, height=1200, bg="MIDNIGHTBLUE", relief="raise")
+    Leftframe.pack(side=LEFT)
+
+    Rightframe = Frame(jan, width=1000, height=1200, bg="MIDNIGHTBLUE", relief="raise")
+    Rightframe.pack(side=RIGHT)
+
+    label_inicial = Label(Rightframe, text="Biblioteca BGD²", font=("Century Gothic", 25), bg="MIDNIGHTBLUE", fg="white")
+    label_inicial.place(x=1, y=200)
+
+    #Botões
+    CadastroButton = Button(Rightframe, text="Cadastrar Livro", width=30, command= Telas_Livro.cadastrar_livro)
+    CadastroButton.place(x=90, y=300)
+
+    AtualizarButton = Button(Rightframe, text="Atualizar Livro", width=30, command= Telas_Livro.autualizar_livro)
+    AtualizarButton.place(x=90, y=340)
+
+    AcervoButton = Button(Rightframe, text="Mostrar Acervo", width=30, command= Telas_Livro.listagem_livro)
+    AcervoButton.place(x=90, y=380)
+
+    EmprestimoButton = Button(Rightframe, text="Emprestrar Livro", width=30, command= Telas_Livro.emprestar_livro)
+    EmprestimoButton.place(x=90, y=420)
+
+    DevolverButton = Button(Rightframe, text="Devolver Livro", width=30, command= Telas_Livro.devolver_livro)
+    DevolverButton.place(x=90, y=460)
 
     jan.mainloop()
 
@@ -60,14 +91,14 @@ class Telas_Livro:
             an = Entry_ano.get()
             d = 1
             insert(mydb, t, au, an, d)
-        
-        def limpar():
-            Entry_titulo
-        
+            if insert:
+                messagebox.showinfo("Cadastro Livro", "Cadastro do livro bem-sucedido!")
+                
+            
 
         btn_Cadastrar = Button(root, text='Cadastrar Livro', command=registrar_livro)
         btn_Cadastrar.grid(row=3, columnspan=2, padx=5, pady=5)
-        btn_voltar = Button(root, text='Voltar', command= volta )
+        btn_voltar = Button(root, text='Voltar', command= menu_opcoes )
         btn_voltar.grid(row= 4, columnspan=3, padx= 6, pady=6 )
         root.mainloop()
         mydb.close()
@@ -104,10 +135,14 @@ class Telas_Livro:
             an = entrada_ano.get()
             d = 1
             update(mydb, ta, tn, au, an, d)
+            if update:
+                messagebox.showinfo("Atualização de Livro", "Atualização do livro bem-sucedido!")
+            else:
+                messagebox.showerror("Atualizar Livro", "Não foi possivel fazer a acão!")
 
         botao_atualizar = Button(tela, text='Atualizar Livro', command= registrar_atualizacao)
         botao_atualizar.grid(column=1, row=4)
-        btn_voltar = Button(tela, text='Voltar', command= volta )
+        btn_voltar = Button(tela, text='Voltar', command= menu_opcoes )
         btn_voltar.grid(row= 4, columnspan=3, padx= 6, pady=6 )
         tela.mainloop()
         mydb.close()
@@ -123,12 +158,16 @@ class Telas_Livro:
         entrada_titulo.grid(column=1, row=0)
 
         def registrar_emprestimo():
-            t = entrada_titulo.get()
-            to_lend2(mydb, t)
+            tl2 = entrada_titulo.get()
+            to_lend2(mydb, tl2)
+            if to_lend2:
+                messagebox.showinfo("Emprestrar Livro", "Empréstimo bem-sucedido!")
+            else:
+                messagebox.showerror("Devolver Livro", "Não foi possivel fazer a acão!")
             
         botao_emprestar = Button(tela, text='Emprestar Livro', command= registrar_emprestimo)
         botao_emprestar.grid(column=1, row=1)
-        btn_voltar = Button(tela, text='Voltar', command= volta )
+        btn_voltar = Button(tela, text='Voltar', command= menu_opcoes)
         btn_voltar.grid(row= 4, columnspan=3, padx= 6, pady=6 )
         tela.mainloop()
         mydb.close()
@@ -144,25 +183,40 @@ class Telas_Livro:
         entrada_titulo.grid(column=1, row=0)
 
         def registrar_devolucao():
-            t = entrada_titulo.get()
-            give_back2(mydb, t)
+            tl = []
+            tl.append(entrada_titulo.get())
+            give_back2(mydb, tl)
+            if give_back2:
+                messagebox.showinfo("Devolver Livro", "Devoluçao bem-sucedida!")
+            else:
+                messagebox.showerror("Devolver Livro", "Não foi possivel fazer a acão!")
         
         botao_devolver = Button(tela, text='Devolver Livro', command= registrar_devolucao)
         botao_devolver.grid(column=1, row=2)
-        btn_voltar = Button(tela, text='Voltar', command= volta )
+        btn_voltar = Button(tela, text='Voltar', command= menu_opcoes)
         btn_voltar.grid(row= 4, columnspan=3, padx= 6, pady=6 )
         tela.mainloop()
         mydb.close()
 
     def listagem_livro():
         mydb = connect()
-        tela = Tk()
-        tela.title('Acervo')
-
-        
     
+        lista_window = Tk()
+        lista_window.title('Lista de Livros')
 
+        Label_header = Label(lista_window, text = 'Título\tAutor\tAno')
+        Label_header.pack()
+        query(mydb= Label_header)
         
+
+        Root = Tk()
+        Root.title('Listagem de Livros')
+
+        btn_listar = Button(Root, text='Mostrar Listagem', command=query)
+        btn_listar.grid(padx=10, pady=10)
+
+        mydb.close()
+        Root.mainloop()
     
 
 class Telas_Usuario:
@@ -227,6 +281,9 @@ class Telas_Usuario:
             es = entrada_estado.get()
             cpe = entrada_CEP.get()
             register(mydb, n, em, s, nas,  r, b, c, es, cpe)
+            if register:
+                messagebox.showinfo("Cadastro", "Cadastro bem-sucedido!")
+                messagebox.showinfo("", "Faça login para acessar nosso sistema!")
         
         botao_cadastrar = Button(tela, text='Cadastrar', command= registro_user)
         botao_cadastrar.grid(column= 1, row= 12)
@@ -252,10 +309,14 @@ class Telas_Usuario:
             em = entrada_email.get()
             sen = entrada_senha.get()
             login(mydb, em, sen)
+
             if login:
-                return True
+                messagebox.showinfo('Login', 'Usuário aceito')
+                menu_opcoes()
+             
             else:
-                return False
+                messagebox.showerror("Login", "Usuário ou senha incorretos!")
+                
 
        
         botao_login = Button(tela, text='Login', command=registrar_login)
@@ -263,4 +324,3 @@ class Telas_Usuario:
         tela.mainloop()
         mydb.close()
 
-volta()

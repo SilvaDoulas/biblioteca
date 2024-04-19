@@ -102,10 +102,10 @@ def login(mydb, email, senha):
 
     if user:
         print("Login bem-sucedido.")
-        return user
+        return True
     else:
         print("Credenciais inválidas.")
-        return None
+        return False
 
 def to_lend2(mydb, titulo):
     mycursor = mydb.cursor()
